@@ -1,0 +1,21 @@
+[package]
+name = "move-jsongen"
+version = "0.0.1"
+authors = ["Mana Hippo <mana@hippo.space>"]
+publish = false
+edition = "2018"
+license = "Apache-2.0"
+
+[dependencies]
+# diem dependencies
+move-compiler = { path = "../../move-compiler" }
+move-model = { path = "../../move-model" }
+
+# external dependencies
+itertools = "0.10.0"
+log = "0.4.14"
+serde = { version = "1.0.124", features = ["derive"] }
+
+[dev-dependencies]
+move-prover = { path = ".." }
+datatest-stable = "0.1.1"

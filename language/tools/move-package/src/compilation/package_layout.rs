@@ -15,6 +15,7 @@ pub enum CompiledPackageLayout {
     CompiledScripts,
     CompiledDocs,
     CompiledABIs,
+    CompiledJSON,
 }
 
 impl CompiledPackageLayout {
@@ -29,6 +30,7 @@ impl CompiledPackageLayout {
             Self::CompiledScripts => "bytecode_scripts",
             Self::CompiledDocs => "docs",
             Self::CompiledABIs => "abis",
+            Self::CompiledJSON => "json",
         };
         Path::new(path)
     }

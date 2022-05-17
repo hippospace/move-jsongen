@@ -29,6 +29,7 @@ use move_compiler::{
     Compiler,
 };
 use move_docgen::{Docgen, DocgenOptions};
+use move_jsongen::{Jsongen, JsongenOptions};
 use move_model::{model::GlobalEnv, options::ModelBuilderOptions, run_model_builder_with_options};
 use move_symbol_pool::Symbol;
 use serde::{Deserialize, Serialize};
@@ -85,6 +86,8 @@ pub struct CompiledPackage {
     /// filename -> json bytes for ScriptABI. Can then be used to generate transaction builders in
     /// various languages.
     pub compiled_abis: Option<Vec<(String, Vec<u8>)>>,
+    /// filename -> json_text
+    pub compiled_json: Option<Vec<(String, String)>>,
 }
 
 /// Represents a compiled package that has been saved to disk. This holds only the minimal metadata
@@ -190,12 +193,33 @@ impl OnDiskCompiledPackage {
             None
         };
 
+        let json_path = self
+            .root_path
+            .join(self.package.compiled_package_info.package_name.as_str())
+            .join(CompiledPackageLayout::CompiledJSON.path());
+        let compiled_json = if json_path.is_dir() {
+            Some(
+                find_filenames(&[json_path.to_string_lossy().to_string()], |path| {
+                    extension_equals(path, "json")
+                })?
+                .into_iter()
+                .map(|path| {
+                    let contents = std::fs::read_to_string(&path).unwrap();
+                    (path, contents)
+                })
+                .collect(),
+            )
+        } else {
+            None
+        };
+
         Ok(CompiledPackage {
             compiled_package_info: self.package.compiled_package_info.clone(),
             root_compiled_units,
             deps_compiled_units,
             compiled_docs,
             compiled_abis,
+            compiled_json,
         })
     }
 
@@ -555,8 +579,10 @@ impl CompiledPackage {
 
         let mut compiled_docs = None;
         let mut compiled_abis = None;
+        let mut compiled_ts = None;
         if resolution_graph.build_options.generate_docs
             || resolution_graph.build_options.generate_abis
+            || resolution_graph.build_options.generate_json
         {
             let model = run_model_builder_with_options(
                 vec![sources_package_paths],
@@ -577,6 +603,10 @@ impl CompiledPackage {
             if resolution_graph.build_options.generate_abis {
                 compiled_abis = Some(Self::build_abis(&model, &root_compiled_units));
             }
+
+            if resolution_graph.build_options.generate_json {
+                compiled_ts = Some(Self::build_json(&model))
+            }
         };
 
         let compiled_package = CompiledPackage {
@@ -590,6 +620,7 @@ impl CompiledPackage {
             deps_compiled_units,
             compiled_docs,
             compiled_abis,
+            compiled_json: compiled_ts,
         };
 
         compiled_package.save_to_disk(project_root.join(CompiledPackageLayout::Root.path()))?;
@@ -709,6 +740,18 @@ impl CompiledPackage {
             }
         }
 
+        if let Some(jsons) = &self.compiled_json {
+            for (json_filename, json_content) in jsons {
+                on_disk_package.save_under(
+                    CompiledPackageLayout::CompiledJSON
+                        .path()
+                        .join(&json_filename)
+                        .with_extension("json"),
+                    json_content.clone().as_bytes(),
+                )?;
+            }
+        }
+
         on_disk_package.save_under(
             CompiledPackageLayout::BuildInfo.path(),
             serde_yaml::to_string(&on_disk_package.package)?.as_bytes(),
@@ -736,6 +779,12 @@ impl CompiledPackage {
         let mut abigen = Abigen::new(model, &abi_options);
         abigen.gen();
         abigen.into_result()
+    }
+
+    fn build_json(model: &GlobalEnv) -> Vec<(String, String)> {
+        let jsongen_options = JsongenOptions::default();
+        let jsongen = Jsongen::new(model, &jsongen_options);
+        jsongen.gen()
     }
 
     fn build_docs(

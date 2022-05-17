@@ -2472,6 +2472,19 @@ dependencies = [
 ]
 
 [[package]]
+name = "move-jsongen"
+version = "0.0.1"
+dependencies = [
+ "datatest-stable",
+ "itertools 0.10.1",
+ "log",
+ "move-compiler",
+ "move-model",
+ "move-prover",
+ "serde 1.0.130",
+]
+
+[[package]]
 name = "move-model"
 version = "0.1.0"
 dependencies = [
@@ -2518,6 +2531,7 @@ dependencies = [
  "move-compiler",
  "move-core-types",
  "move-docgen",
+ "move-jsongen",
  "move-model",
  "move-symbol-pool",
  "move-to-yul",
@@ -2558,6 +2572,7 @@ dependencies = [
  "move-docgen",
  "move-errmapgen",
  "move-ir-types",
+ "move-jsongen",
  "move-model",
  "move-prover-boogie-backend",
  "move-prover-test-utils",
