@@ -24,6 +24,7 @@ use move_command_line_common::{
         SOURCE_MAP_EXTENSION,
     },
 };
+use move_compiler::command_line::compiler::CompiledProgramWithIntermediateOutput;
 use move_compiler::{
     compiled_unit::{
         self, AnnotatedCompiledUnit, CompiledUnit, NamedCompiledModule, NamedCompiledScript,
@@ -33,6 +34,7 @@ use move_compiler::{
     Compiler,
 };
 use move_docgen::{Docgen, DocgenOptions};
+use move_jsongen::{Jsongen, JsongenOptions};
 use move_model::{model::GlobalEnv, options::ModelBuilderOptions, run_model_builder_with_options};
 use move_symbol_pool::Symbol;
 use serde::{Deserialize, Serialize};
@@ -89,6 +91,8 @@ pub struct CompiledPackage {
     /// filename -> json bytes for ScriptABI. Can then be used to generate transaction builders in
     /// various languages.
     pub compiled_abis: Option<Vec<(String, Vec<u8>)>>,
+    /// filename -> json_text
+    pub compiled_json: Option<Vec<(String, String)>>,
 }
 
 /// Represents a compiled package that has been saved to disk. This holds only the minimal metadata
@@ -194,12 +198,33 @@ impl OnDiskCompiledPackage {
             None
         };
 
+        let json_path = self
+            .root_path
+            .join(self.package.compiled_package_info.package_name.as_str())
+            .join(CompiledPackageLayout::CompiledJSON.path());
+        let compiled_json = if json_path.is_dir() {
+            Some(
+                find_filenames(&[json_path.to_string_lossy().to_string()], |path| {
+                    extension_equals(path, "json")
+                })?
+                .into_iter()
+                .map(|path| {
+                    let contents = std::fs::read_to_string(&path).unwrap();
+                    (path, contents)
+                })
+                .collect(),
+            )
+        } else {
+            None
+        };
+
         Ok(CompiledPackage {
             compiled_package_info: self.package.compiled_package_info.clone(),
             root_compiled_units,
             deps_compiled_units,
             compiled_docs,
             compiled_abis,
+            compiled_json,
         })
     }
 
@@ -497,8 +522,11 @@ impl CompiledPackage {
         resolution_graph: &ResolvedGraph,
         mut compiler_driver: impl FnMut(
             Compiler,
-        )
-            -> Result<(FilesSourceText, Vec<AnnotatedCompiledUnit>)>,
+        ) -> Result<(
+            FilesSourceText,
+            Vec<AnnotatedCompiledUnit>,
+            Option<CompiledProgramWithIntermediateOutput>,
+        )>,
     ) -> Result<CompiledPackage> {
         let immediate_dependencies = transitive_dependencies
             .iter()
@@ -543,7 +571,7 @@ impl CompiledPackage {
             v
         };
         let compiler = Compiler::from_package_paths(paths, vec![]).set_flags(flags);
-        let (file_map, all_compiled_units) = compiler_driver(compiler)?;
+        let (file_map, all_compiled_units, opt_intermediate_output) = compiler_driver(compiler)?;
         let mut root_compiled_units = vec![];
         let mut deps_compiled_units = vec![];
         for annot_unit in all_compiled_units {
@@ -565,8 +593,10 @@ impl CompiledPackage {
 
         let mut compiled_docs = None;
         let mut compiled_abis = None;
+        let mut compiled_json = None;
         if resolution_graph.build_options.generate_docs
             || resolution_graph.build_options.generate_abis
+            || resolution_graph.build_options.generate_json
         {
             let model = run_model_builder_with_options(
                 vec![sources_package_paths],
@@ -591,6 +621,10 @@ impl CompiledPackage {
                     &root_compiled_units,
                 ));
             }
+
+            if resolution_graph.build_options.generate_json {
+                compiled_json = Some(Self::build_json(&model, &opt_intermediate_output.unwrap()))
+            }
         };
 
         let compiled_package = CompiledPackage {
@@ -604,6 +638,7 @@ impl CompiledPackage {
             deps_compiled_units,
             compiled_docs,
             compiled_abis,
+            compiled_json,
         };
 
         compiled_package.save_to_disk(project_root.join(CompiledPackageLayout::Root.path()))?;
@@ -723,6 +758,18 @@ impl CompiledPackage {
             }
         }
 
+        if let Some(jsons) = &self.compiled_json {
+            for (json_filename, json_content) in jsons {
+                on_disk_package.save_under(
+                    CompiledPackageLayout::CompiledJSON
+                        .path()
+                        .join(&json_filename)
+                        .with_extension("json"),
+                    json_content.clone().as_bytes(),
+                )?;
+            }
+        }
+
         on_disk_package.save_under(
             CompiledPackageLayout::BuildInfo.path(),
             serde_yaml::to_string(&on_disk_package.package)?.as_bytes(),
@@ -757,6 +804,15 @@ impl CompiledPackage {
         let mut abigen = Abigen::new(model, &abi_options);
         abigen.gen();
         abigen.into_result()
+    }
+
+    fn build_json(
+        model: &GlobalEnv,
+        intermediate_output: &CompiledProgramWithIntermediateOutput,
+    ) -> Vec<(String, String)> {
+        let jsongen_options = JsongenOptions::default();
+        let jsongen = Jsongen::new(model, intermediate_output, &jsongen_options);
+        jsongen.gen()
     }
 
     fn build_docs(

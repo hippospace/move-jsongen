@@ -14,6 +14,7 @@ move-binary-format = { path = "../move-binary-format" }
 move-compiler = { path = "../move-compiler" }
 move-model = { path = "../move-model" }
 move-docgen = { path = "move-docgen" }
+move-jsongen = { path = "move-jsongen" }
 move-abigen = { path = "move-abigen" }
 move-errmapgen = { path = "move-errmapgen" }
 move-stackless-bytecode = { path = "bytecode" }

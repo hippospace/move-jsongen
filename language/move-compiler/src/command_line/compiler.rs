@@ -84,6 +84,18 @@ pub struct FullyCompiledProgram {
     pub compiled: Vec<AnnotatedCompiledUnit>,
 }
 
+#[derive(Clone)]
+pub struct CompiledProgramWithIntermediateOutput {
+    pub files: FilesSourceText,
+    pub parser: Option<parser::ast::Program>,
+    pub expansion: Option<expansion::ast::Program>,
+    pub naming: Option<naming::ast::Program>,
+    pub typing: Option<typing::ast::Program>,
+    pub hlir: Option<hlir::ast::Program>,
+    pub cfgir: Option<cfgir::ast::Program>,
+    pub compiled: Option<(Vec<AnnotatedCompiledUnit>, Diagnostics)>,
+}
+
 //**************************************************************************************************
 // Entry points and impls
 //**************************************************************************************************
@@ -222,6 +234,102 @@ impl<'a> Compiler<'a> {
                 .map(|compiler| (comments, compiler))
         });
         Ok((source_text, res))
+    }
+
+    pub fn run_keep_intermediate<const TARGET: Pass>(
+        self,
+        keep_parser: bool,
+        keep_expansion: bool,
+        keep_naming: bool,
+        keep_typing: bool,
+        keep_hlir: bool,
+        keep_cfgir: bool,
+        keep_compilation: bool,
+    ) -> anyhow::Result<(
+        FilesSourceText,
+        Result<(CommentMap, CompiledProgramWithIntermediateOutput), Diagnostics>,
+    )> {
+        let Self {
+            maps,
+            targets,
+            mut deps,
+            interface_files_dir_opt,
+            pre_compiled_lib,
+            compiled_module_named_address_mapping,
+            flags,
+        } = self;
+        generate_interface_files_for_deps(
+            &mut deps,
+            interface_files_dir_opt,
+            &compiled_module_named_address_mapping,
+        )?;
+        let mut compilation_env = CompilationEnv::new(flags);
+        let (source_text, pprog_and_comments_res) =
+            parse_program(&mut compilation_env, maps, targets, deps)?;
+        let res = pprog_and_comments_res.and_then(|(pprog, comments)| {
+            SteppedCompiler::new_at_parser(compilation_env, pre_compiled_lib, pprog)
+                .run::<PASS_PARSER>()
+                .map(|compiler| (comments, compiler))
+        });
+
+        let (comments, stepped) = match res {
+            Err(errors) => return Ok((source_text, Err(errors))),
+            Ok(res) => res,
+        };
+
+        let (empty_compiler, ast) = stepped.into_ast();
+        let mut compilation_env = empty_compiler.compilation_env;
+        let start = PassResult::Parser(ast);
+        let mut intermediate = CompiledProgramWithIntermediateOutput {
+            files: source_text.clone(),
+            parser: None,
+            expansion: None,
+            naming: None,
+            typing: None,
+            hlir: None,
+            cfgir: None,
+            compiled: None,
+        };
+
+        let save_result = |cur: &PassResult, env: &CompilationEnv| match cur {
+            PassResult::Parser(prog) if keep_parser => intermediate.parser = Some(prog.clone()),
+            PassResult::Expansion(eprog) if keep_expansion => {
+                if env.has_diags() {
+                    return;
+                }
+                intermediate.expansion = Some(eprog.clone())
+            }
+            PassResult::Naming(nprog) if keep_naming => {
+                if env.has_diags() {
+                    return;
+                }
+                intermediate.naming = Some(nprog.clone())
+            }
+            PassResult::Typing(tprog) if keep_typing => intermediate.typing = Some(tprog.clone()),
+            PassResult::HLIR(hprog) if keep_hlir => {
+                if env.has_diags() {
+                    return;
+                }
+                intermediate.hlir = Some(hprog.clone());
+            }
+            PassResult::CFGIR(cprog) if keep_cfgir => {
+                intermediate.cfgir = Some(cprog.clone());
+            }
+            PassResult::Compilation(units, final_diags) if keep_compilation => {
+                intermediate.compiled = Some((units.clone(), final_diags.clone()))
+            }
+            _ => (),
+        };
+        match run(
+            &mut compilation_env,
+            None,
+            start,
+            PASS_COMPILATION,
+            save_result,
+        ) {
+            Err(errors) => return Ok((source_text, Err(errors))),
+            Ok(_) => Ok((source_text, Ok((comments, intermediate)))),
+        }
     }
 
     pub fn check(self) -> anyhow::Result<(FilesSourceText, Result<(), Diagnostics>)> {
@@ -419,84 +527,25 @@ pub fn construct_pre_compiled_lib<Paths: Into<Symbol>, NamedAddress: Into<Symbol
     interface_files_dir_opt: Option<String>,
     flags: Flags,
 ) -> anyhow::Result<Result<FullyCompiledProgram, (FilesSourceText, Diagnostics)>> {
-    let (files, pprog_and_comments_res) =
+    let compiler =
         Compiler::from_package_paths(targets, Vec::<PackagePaths<Paths, NamedAddress>>::new())
             .set_interface_files_dir_opt(interface_files_dir_opt)
-            .set_flags(flags)
-            .run::<PASS_PARSER>()?;
+            .set_flags(flags);
 
-    let (_comments, stepped) = match pprog_and_comments_res {
-        Err(errors) => return Ok(Err((files, errors))),
-        Ok(res) => res,
-    };
+    let (files, res) = compiler
+        .run_keep_intermediate::<PASS_COMPILATION>(true, true, true, true, true, true, true)?;
 
-    let (empty_compiler, ast) = stepped.into_ast();
-    let mut compilation_env = empty_compiler.compilation_env;
-    let start = PassResult::Parser(ast);
-    let mut parser = None;
-    let mut expansion = None;
-    let mut naming = None;
-    let mut typing = None;
-    let mut hlir = None;
-    let mut cfgir = None;
-    let mut compiled = None;
-
-    let save_result = |cur: &PassResult, env: &CompilationEnv| match cur {
-        PassResult::Parser(prog) => {
-            assert!(parser.is_none());
-            parser = Some(prog.clone())
-        }
-        PassResult::Expansion(eprog) => {
-            if env.has_diags() {
-                return;
-            }
-            assert!(expansion.is_none());
-            expansion = Some(eprog.clone())
-        }
-        PassResult::Naming(nprog) => {
-            if env.has_diags() {
-                return;
-            }
-            assert!(naming.is_none());
-            naming = Some(nprog.clone())
-        }
-        PassResult::Typing(tprog) => {
-            assert!(typing.is_none());
-            typing = Some(tprog.clone())
-        }
-        PassResult::HLIR(hprog) => {
-            if env.has_diags() {
-                return;
-            }
-            assert!(hlir.is_none());
-            hlir = Some(hprog.clone());
-        }
-        PassResult::CFGIR(cprog) => {
-            assert!(cfgir.is_none());
-            cfgir = Some(cprog.clone());
-        }
-        PassResult::Compilation(units, _final_diags) => {
-            assert!(compiled.is_none());
-            compiled = Some(units.clone())
-        }
-    };
-    match run(
-        &mut compilation_env,
-        None,
-        start,
-        PASS_COMPILATION,
-        save_result,
-    ) {
+    match res {
         Err(errors) => Ok(Err((files, errors))),
-        Ok(_) => Ok(Ok(FullyCompiledProgram {
+        Ok((_comments, intermediate)) => Ok(Ok(FullyCompiledProgram {
             files,
-            parser: parser.unwrap(),
-            expansion: expansion.unwrap(),
-            naming: naming.unwrap(),
-            typing: typing.unwrap(),
-            hlir: hlir.unwrap(),
-            cfgir: cfgir.unwrap(),
-            compiled: compiled.unwrap(),
+            parser: intermediate.parser.unwrap(),
+            expansion: intermediate.expansion.unwrap(),
+            naming: intermediate.naming.unwrap(),
+            typing: intermediate.typing.unwrap(),
+            hlir: intermediate.hlir.unwrap(),
+            cfgir: intermediate.cfgir.unwrap(),
+            compiled: intermediate.compiled.unwrap().0,
         })),
     }
 }

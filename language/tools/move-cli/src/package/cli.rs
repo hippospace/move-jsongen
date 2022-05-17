@@ -514,7 +514,7 @@ pub fn run_move_unit_tests(
 
         let (units, _) = diagnostics::unwrap_or_report_diagnostics(&files, compilation_result);
         test_plan = Some((built_test_plan, files.clone(), units.clone()));
-        Ok((files, units))
+        Ok((files, units, None))
     })?;
 
     let (test_plan, mut files, units) = test_plan.unwrap();

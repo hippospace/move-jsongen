@@ -526,7 +526,7 @@ impl Symbolicator {
                 Err(diags) => {
                     diagnostics = Some(diags);
                     eprintln!("typed AST compilation failed");
-                    return Ok((files, vec![]));
+                    return Ok((files, vec![], None));
                 }
             };
             eprintln!("compiled to typed AST");
@@ -539,7 +539,7 @@ impl Symbolicator {
                 Err(diags) => {
                     diagnostics = Some(diags);
                     eprintln!("bytecode compilation failed");
-                    return Ok((files, vec![]));
+                    return Ok((files, vec![], None));
                 }
             };
             // warning diagnostics (if any) since compilation succeeded
@@ -548,7 +548,7 @@ impl Symbolicator {
                 diagnostics = Some(diags);
             }
             eprintln!("compiled to bytecode");
-            Ok((files, units))
+            Ok((files, units, None))
         })?;
 
         debug_assert!(typed_ast.is_some() || diagnostics.is_some());

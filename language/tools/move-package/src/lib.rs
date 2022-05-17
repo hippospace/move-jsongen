@@ -111,6 +111,10 @@ pub struct BuildConfig {
     #[clap(name = "generate-abis", long = "abi", global = true)]
     pub generate_abis: bool,
 
+    /// Generate TypeScript interface
+    #[clap(name = "generate-json", long = "json", global = true)]
+    pub generate_json: bool,
+
     /// Installation directory for compiled artifacts. Defaults to current directory.
     #[clap(long = "install-dir", parse(from_os_str), global = true)]
     pub install_dir: Option<PathBuf>,
@@ -138,6 +142,7 @@ impl Default for BuildConfig {
             test_mode: false,
             generate_docs: false,
             generate_abis: false,
+            generate_json: false,
             install_dir: None,
             force_recompilation: false,
             additional_named_addresses: BTreeMap::new(),

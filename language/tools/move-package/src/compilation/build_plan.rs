@@ -9,14 +9,18 @@ use crate::{
 use anyhow::Result;
 use move_compiler::{
     compiled_unit::AnnotatedCompiledUnit,
-    diagnostics::{report_diagnostics_to_color_buffer, report_warnings, FilesSourceText},
-    Compiler,
+    diagnostics::{
+        report_diagnostics_to_color_buffer, report_warnings, unwrap_or_report_diagnostics,
+        FilesSourceText,
+    },
+    Compiler, PASS_COMPILATION,
 };
 use petgraph::algo::toposort;
 use std::{collections::BTreeSet, io::Write, path::Path};
 
 use super::package_layout::CompiledPackageLayout;
 
+use move_compiler::command_line::compiler::CompiledProgramWithIntermediateOutput;
 #[cfg(feature = "evm-backend")]
 use {
     colored::Colorize,
@@ -104,7 +108,30 @@ impl BuildPlan {
 
     /// Compilation results in the process exit upon warning/failure
     pub fn compile<W: Write>(&self, writer: &mut W) -> Result<CompiledPackage> {
-        self.compile_with_driver(writer, |compiler| compiler.build_and_report())
+        self.compile_with_driver(writer, |compiler| {
+            let (files, units_diag, opt_intermediate) =
+                if self.resolution_graph.build_options.generate_json {
+                    let (files, res_comments_intermediate) = compiler
+                        .run_keep_intermediate::<{ PASS_COMPILATION }>(
+                            false, false, false, false, true, false, true,
+                        )?;
+
+                    let (_comments, intermediate) =
+                        unwrap_or_report_diagnostics(&files, res_comments_intermediate);
+                    (
+                        files,
+                        intermediate.compiled.clone().unwrap(),
+                        Some(intermediate),
+                    )
+                } else {
+                    let (files, res_comments_compiler) = compiler.run::<{ PASS_COMPILATION }>()?;
+                    let units = res_comments_compiler.unwrap().1.into_compiled_units();
+                    (files, units, None)
+                };
+            let (units, diags) = units_diag;
+            report_warnings(&files, diags);
+            Ok((files, units, opt_intermediate))
+        })
     }
 
     /// Compilation process does not exit even if warnings/failures are encountered
@@ -114,7 +141,7 @@ impl BuildPlan {
             match units_res {
                 Ok((units, warning_diags)) => {
                     report_warnings(&files, warning_diags);
-                    Ok((files, units))
+                    Ok((files, units, None))
                 }
                 Err(error_diags) => {
                     assert!(!error_diags.is_empty());
@@ -133,8 +160,11 @@ impl BuildPlan {
         writer: &mut W,
         mut compiler_driver: impl FnMut(
             Compiler,
-        )
-            -> anyhow::Result<(FilesSourceText, Vec<AnnotatedCompiledUnit>)>,
+        ) -> anyhow::Result<(
+            FilesSourceText,
+            Vec<AnnotatedCompiledUnit>,
+            Option<CompiledProgramWithIntermediateOutput>,
+        )>,
     ) -> Result<CompiledPackage> {
         let root_package = &self.resolution_graph.package_table[&self.root];
         let project_root = match &self.resolution_graph.build_options.install_dir {
