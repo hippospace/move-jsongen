@@ -1,0 +1,24 @@
+{
+  "address": "0000000000000000000000000000000000000000000000000000000000000001",
+  "module": "Offer",
+  "constants": [
+    { "name": "EOFFER_ALREADY_CREATED", "type": "u64", "value": "1" },
+    { "name": "EOFFER_DNE_FOR_ACCOUNT", "type": "u64", "value": "0" },
+    { "name": "EOFFER_DOES_NOT_EXIST", "type": "u64", "value": "2" }
+  ],
+  "structs": [
+    {
+      "name": "Offer",
+      "abilities": ["key"],
+      "type_params": [
+        { "name": "$tv0", "abilities": [], "is_phantom": false }
+      ],
+      "fields": [
+        { "name": "offered", "type": "$tv0" },
+        { "name": "for", "type": "address" }
+      ]
+    }
+  ],
+  "script_functions": [
+  ]
+}

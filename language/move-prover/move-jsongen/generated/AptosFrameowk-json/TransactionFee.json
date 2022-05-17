@@ -1,0 +1,10 @@
+{
+  "address": "0000000000000000000000000000000000000000000000000000000000000001",
+  "module": "TransactionFee",
+  "constants": [
+  ],
+  "structs": [
+  ],
+  "script_functions": [
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "address": "0000000000000000000000000000000000000000000000000000000000000001",
+  "module": "ChainId",
+  "constants": [
+    { "name": "ECHAIN_ID", "type": "u64", "value": "0" }
+  ],
+  "structs": [
+    {
+      "name": "ChainId",
+      "abilities": ["key"],
+      "type_params": [],
+      "fields": [
+        { "name": "id", "type": "u8" }
+      ]
+    }
+  ],
+  "script_functions": [
+  ]
+}

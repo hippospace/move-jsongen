@@ -1,0 +1,35 @@
+{
+  "address": "0000000000000000000000000000000000000000000000000000000000000001",
+  "module": "Table",
+  "constants": [
+    { "name": "EALREADY_EXISTS", "type": "u64", "value": "100" },
+    { "name": "ENOT_EMPTY", "type": "u64", "value": "102" },
+    { "name": "ENOT_FOUND", "type": "u64", "value": "101" }
+  ],
+  "structs": [
+    {
+      "name": "Table",
+      "abilities": ["store"],
+      "type_params": [
+        { "name": "$tv0", "abilities": [], "is_phantom": true },
+        { "name": "$tv1", "abilities": [], "is_phantom": true }
+      ],
+      "fields": [
+        { "name": "handle", "type": "u128" },
+        { "name": "length", "type": "u64" }
+      ]
+    },
+    {
+      "name": "Box",
+      "abilities": ["drop", "store", "key"],
+      "type_params": [
+        { "name": "$tv0", "abilities": [], "is_phantom": false }
+      ],
+      "fields": [
+        { "name": "val", "type": "$tv0" }
+      ]
+    }
+  ],
+  "script_functions": [
+  ]
+}

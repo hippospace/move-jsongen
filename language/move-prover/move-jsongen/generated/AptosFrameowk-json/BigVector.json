@@ -1,0 +1,35 @@
+{
+  "address": "0000000000000000000000000000000000000000000000000000000000000001",
+  "module": "BigVector",
+  "constants": [
+    { "name": "EINDEX_OUT_OF_BOUNDS", "type": "u64", "value": "0" },
+    { "name": "ENOT_EMPTY", "type": "u64", "value": "2" },
+    { "name": "EOUT_OF_CAPACITY", "type": "u64", "value": "1" }
+  ],
+  "structs": [
+    {
+      "name": "BigVectorIndex",
+      "abilities": ["copy", "drop", "store"],
+      "type_params": [],
+      "fields": [
+        { "name": "bucket_index", "type": "u64" },
+        { "name": "vec_index", "type": "u64" }
+      ]
+    },
+    {
+      "name": "BigVector",
+      "abilities": ["store"],
+      "type_params": [
+        { "name": "$tv0", "abilities": [], "is_phantom": false }
+      ],
+      "fields": [
+        { "name": "buckets", "type": "0000000000000000000000000000000000000000000000000000000000000001::Table::Table" },
+        { "name": "end_index", "type": "BigVectorIndex" },
+        { "name": "num_buckets", "type": "u64" },
+        { "name": "bucket_size", "type": "u64" }
+      ]
+    }
+  ],
+  "script_functions": [
+  ]
+}

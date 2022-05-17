@@ -1,0 +1,76 @@
+{
+  "address": "0000000000000000000000000000000000000000000000000000000000000001",
+  "module": "Account",
+  "constants": [
+    { "name": "MAX_U64", "type": "u128", "value": "18446744073709551615" },
+    { "name": "EACCOUNT", "type": "u64", "value": "0" },
+    { "name": "EADDR_NOT_MATCH_PREIMAGE", "type": "u64", "value": "7" },
+    { "name": "ECANNOT_CREATE_AT_CORE_CODE", "type": "u64", "value": "6" },
+    { "name": "ECANNOT_CREATE_AT_VM_RESERVED", "type": "u64", "value": "4" },
+    { "name": "EGAS", "type": "u64", "value": "5" },
+    { "name": "EMALFORMED_AUTHENTICATION_KEY", "type": "u64", "value": "3" },
+    { "name": "EMODULE_NOT_ALLOWED", "type": "u64", "value": "10" },
+    { "name": "EMULTI_AGENT_NOT_SUPPORTED", "type": "u64", "value": "9" },
+    { "name": "ENOT_APTOS_FRAMEWORK", "type": "u64", "value": "2" },
+    { "name": "ESCRIPT_NOT_ALLOWED", "type": "u64", "value": "11" },
+    { "name": "ESEQUENCE_NUMBER_TOO_BIG", "type": "u64", "value": "1" },
+    { "name": "EWRITESET_NOT_ALLOWED", "type": "u64", "value": "8" },
+    { "name": "PROLOGUE_EACCOUNT_DNE", "type": "u64", "value": "1004" },
+    { "name": "PROLOGUE_EBAD_CHAIN_ID", "type": "u64", "value": "1007" },
+    { "name": "PROLOGUE_ECANT_PAY_GAS_DEPOSIT", "type": "u64", "value": "1005" },
+    { "name": "PROLOGUE_EINVALID_ACCOUNT_AUTH_KEY", "type": "u64", "value": "1001" },
+    { "name": "PROLOGUE_EINVALID_WRITESET_SENDER", "type": "u64", "value": "1010" },
+    { "name": "PROLOGUE_EMODULE_NOT_ALLOWED", "type": "u64", "value": "1009" },
+    { "name": "PROLOGUE_ESCRIPT_NOT_ALLOWED", "type": "u64", "value": "1008" },
+    { "name": "PROLOGUE_ESECONDARY_KEYS_ADDRESSES_COUNT_MISMATCH", "type": "u64", "value": "1012" },
+    { "name": "PROLOGUE_ESEQUENCE_NUMBER_TOO_BIG", "type": "u64", "value": "1011" },
+    { "name": "PROLOGUE_ESEQUENCE_NUMBER_TOO_NEW", "type": "u64", "value": "1003" },
+    { "name": "PROLOGUE_ESEQUENCE_NUMBER_TOO_OLD", "type": "u64", "value": "1002" },
+    { "name": "PROLOGUE_ETRANSACTION_EXPIRED", "type": "u64", "value": "1006" }
+  ],
+  "structs": [
+    {
+      "name": "Account",
+      "abilities": ["store", "key"],
+      "type_params": [],
+      "fields": [
+        { "name": "authentication_key", "type": "vector<u8>" },
+        { "name": "sequence_number", "type": "u64" },
+        { "name": "self_address", "type": "address" }
+      ]
+    },
+    {
+      "name": "ChainSpecificAccountInfo",
+      "abilities": ["key"],
+      "type_params": [],
+      "fields": [
+        { "name": "module_addr", "type": "address" },
+        { "name": "module_name", "type": "vector<u8>" },
+        { "name": "script_prologue_name", "type": "vector<u8>" },
+        { "name": "module_prologue_name", "type": "vector<u8>" },
+        { "name": "writeset_prologue_name", "type": "vector<u8>" },
+        { "name": "multi_agent_prologue_name", "type": "vector<u8>" },
+        { "name": "user_epilogue_name", "type": "vector<u8>" },
+        { "name": "writeset_epilogue_name", "type": "vector<u8>" },
+        { "name": "currency_code_required", "type": "bool" }
+      ]
+    }
+  ],
+  "script_functions": [
+    {
+      "name": "rotate_authentication_key",
+      "type_params": [],
+      "params": [
+        { "name": "account", "type": "signer" },
+        { "name": "new_auth_key", "type": "vector<u8>" }
+      ]
+    },
+    {
+      "name": "create_account",
+      "type_params": [],
+      "params": [
+        { "name": "auth_key", "type": "address" }
+      ]
+    }
+  ]
+}

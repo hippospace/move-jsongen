@@ -1,0 +1,66 @@
+{
+  "address": "0000000000000000000000000000000000000000000000000000000000000001",
+  "module": "VMConfig",
+  "constants": [
+    { "name": "ECONFIG", "type": "u64", "value": "0" },
+    { "name": "EGAS_CONSTANT_INCONSISTENCY", "type": "u64", "value": "1" }
+  ],
+  "structs": [
+    {
+      "name": "VMConfig",
+      "abilities": ["key"],
+      "type_params": [],
+      "fields": [
+        { "name": "gas_schedule", "type": "GasSchedule" }
+      ]
+    },
+    {
+      "name": "GasSchedule",
+      "abilities": ["copy", "drop", "store"],
+      "type_params": [],
+      "fields": [
+        { "name": "instruction_schedule", "type": "vector<u8>" },
+        { "name": "native_schedule", "type": "vector<u8>" },
+        { "name": "gas_constants", "type": "GasConstants" }
+      ]
+    },
+    {
+      "name": "GasConstants",
+      "abilities": ["copy", "drop", "store"],
+      "type_params": [],
+      "fields": [
+        { "name": "global_memory_per_byte_cost", "type": "u64" },
+        { "name": "global_memory_per_byte_write_cost", "type": "u64" },
+        { "name": "min_transaction_gas_units", "type": "u64" },
+        { "name": "large_transaction_cutoff", "type": "u64" },
+        { "name": "intrinsic_gas_per_byte", "type": "u64" },
+        { "name": "maximum_number_of_gas_units", "type": "u64" },
+        { "name": "min_price_per_gas_unit", "type": "u64" },
+        { "name": "max_price_per_gas_unit", "type": "u64" },
+        { "name": "max_transaction_size_in_bytes", "type": "u64" },
+        { "name": "gas_unit_scaling_factor", "type": "u64" },
+        { "name": "default_account_size", "type": "u64" }
+      ]
+    }
+  ],
+  "script_functions": [
+    {
+      "name": "set_gas_constants",
+      "type_params": [],
+      "params": [
+        { "name": "account", "type": "signer" },
+        { "name": "global_memory_per_byte_cost", "type": "u64" },
+        { "name": "global_memory_per_byte_write_cost", "type": "u64" },
+        { "name": "min_transaction_gas_units", "type": "u64" },
+        { "name": "large_transaction_cutoff", "type": "u64" },
+        { "name": "intrinsic_gas_per_byte", "type": "u64" },
+        { "name": "maximum_number_of_gas_units", "type": "u64" },
+        { "name": "min_price_per_gas_unit", "type": "u64" },
+        { "name": "max_price_per_gas_unit", "type": "u64" },
+        { "name": "max_transaction_size_in_bytes", "type": "u64" },
+        { "name": "gas_unit_scaling_factor", "type": "u64" },
+        { "name": "default_account_size", "type": "u64" }
+      ]
+    }
+  ]
+}

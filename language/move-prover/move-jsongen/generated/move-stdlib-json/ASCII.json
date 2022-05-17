@@ -1,0 +1,27 @@
+{
+  "address": "0000000000000000000000000000000000000000000000000000000000000001",
+  "module": "ASCII",
+  "constants": [
+    { "name": "EINVALID_ASCII_CHARACTER", "type": "u64", "value": "0" }
+  ],
+  "structs": [
+    {
+      "name": "String",
+      "abilities": ["copy", "drop", "store"],
+      "type_params": [],
+      "fields": [
+        { "name": "bytes", "type": "vector<u8>" }
+      ]
+    },
+    {
+      "name": "Char",
+      "abilities": ["copy", "drop", "store"],
+      "type_params": [],
+      "fields": [
+        { "name": "byte", "type": "u8" }
+      ]
+    }
+  ],
+  "script_functions": [
+  ]
+}

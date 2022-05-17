@@ -1,0 +1,112 @@
+{
+  "address": "0000000000000000000000000000000000000000000000000000000000000001",
+  "module": "Stake",
+  "constants": [
+    { "name": "EDELEGATION_NOT_FOUND", "type": "u64", "value": "1" },
+    { "name": "EALREADY_VALIDATOR", "type": "u64", "value": "7" },
+    { "name": "EDELEGATION_ALREADY_EXIST", "type": "u64", "value": "10" },
+    { "name": "EDELEGATION_EXCEED_MAX", "type": "u64", "value": "11" },
+    { "name": "ELAST_VALIDATOR", "type": "u64", "value": "9" },
+    { "name": "ELOCK_TIME_TOO_SHORT", "type": "u64", "value": "2" },
+    { "name": "ENOT_VALIDATOR", "type": "u64", "value": "8" },
+    { "name": "ESTAKE_TOO_HIGH", "type": "u64", "value": "6" },
+    { "name": "ESTAKE_TOO_LOW", "type": "u64", "value": "5" },
+    { "name": "EVALIDATOR_CONFIG", "type": "u64", "value": "4" },
+    { "name": "EWITHDRAW_NOT_ALLOWED", "type": "u64", "value": "3" },
+    { "name": "MINIMUM_LOCK_PERIOD", "type": "u64", "value": "86400" }
+  ],
+  "structs": [
+    {
+      "name": "Delegation",
+      "abilities": ["store"],
+      "type_params": [],
+      "fields": [
+        { "name": "coins", "type": "0000000000000000000000000000000000000000000000000000000000000001::TestCoin::Coin" },
+        { "name": "rewards", "type": "0000000000000000000000000000000000000000000000000000000000000001::TestCoin::Coin" },
+        { "name": "locked_until_secs", "type": "u64" }
+      ]
+    },
+    {
+      "name": "StakePool",
+      "abilities": ["store", "key"],
+      "type_params": [],
+      "fields": [
+        { "name": "voting_power", "type": "u64" },
+        { "name": "next_epoch_voting_power", "type": "u64" },
+        { "name": "active", "type": "0000000000000000000000000000000000000000000000000000000000000001::IterableTable::IterableTable" },
+        { "name": "inactive", "type": "0000000000000000000000000000000000000000000000000000000000000001::IterableTable::IterableTable" },
+        { "name": "pending_active", "type": "0000000000000000000000000000000000000000000000000000000000000001::IterableTable::IterableTable" },
+        { "name": "pending_inactive", "type": "0000000000000000000000000000000000000000000000000000000000000001::IterableTable::IterableTable" }
+      ]
+    },
+    {
+      "name": "ValidatorConfig",
+      "abilities": ["copy", "drop", "store", "key"],
+      "type_params": [],
+      "fields": [
+        { "name": "consensus_pubkey", "type": "vector<u8>" },
+        { "name": "network_address", "type": "vector<u8>" },
+        { "name": "fullnode_address", "type": "vector<u8>" }
+      ]
+    },
+    {
+      "name": "ValidatorInfo",
+      "abilities": ["copy", "drop", "store"],
+      "type_params": [],
+      "fields": [
+        { "name": "addr", "type": "address" },
+        { "name": "voting_power", "type": "u64" },
+        { "name": "config", "type": "ValidatorConfig" }
+      ]
+    },
+    {
+      "name": "ValidatorSet",
+      "abilities": ["key"],
+      "type_params": [],
+      "fields": [
+        { "name": "consensus_scheme", "type": "u8" },
+        { "name": "minimum_stake", "type": "u64" },
+        { "name": "maximum_stake", "type": "u64" },
+        { "name": "active_validators", "type": "vector<ValidatorInfo>" },
+        { "name": "pending_inactive", "type": "vector<ValidatorInfo>" },
+        { "name": "pending_active", "type": "vector<ValidatorInfo>" }
+      ]
+    }
+  ],
+  "script_functions": [
+    {
+      "name": "unlock",
+      "type_params": [],
+      "params": [
+        { "name": "account", "type": "&signer" },
+        { "name": "from", "type": "address" }
+      ]
+    },
+    {
+      "name": "withdraw",
+      "type_params": [],
+      "params": [
+        { "name": "account", "type": "&signer" },
+        { "name": "from", "type": "address" }
+      ]
+    },
+    {
+      "name": "register_validator_candidate",
+      "type_params": [],
+      "params": [
+        { "name": "account", "type": "&signer" },
+        { "name": "consensus_pubkey", "type": "vector<u8>" },
+        { "name": "network_address", "type": "vector<u8>" },
+        { "name": "fullnode_address", "type": "vector<u8>" }
+      ]
+    },
+    {
+      "name": "rotate_consensus_key",
+      "type_params": [],
+      "params": [
+        { "name": "account", "type": "&signer" },
+        { "name": "consensus_pubkey", "type": "vector<u8>" }
+      ]
+    }
+  ]
+}

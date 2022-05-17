@@ -1,0 +1,49 @@
+{
+  "address": "0000000000000000000000000000000000000000000000000000000000000001",
+  "module": "Reconfiguration",
+  "constants": [
+    { "name": "MAX_U64", "type": "u64", "value": "18446744073709551615" },
+    { "name": "ECONFIG", "type": "u64", "value": "1" },
+    { "name": "ECONFIGURATION", "type": "u64", "value": "0" },
+    { "name": "EINVALID_BLOCK_TIME", "type": "u64", "value": "3" },
+    { "name": "EINVALID_GUID_FOR_EVENT", "type": "u64", "value": "4" },
+    { "name": "EMODIFY_CAPABILITY", "type": "u64", "value": "2" }
+  ],
+  "structs": [
+    {
+      "name": "NewEpochEvent",
+      "abilities": ["drop", "store"],
+      "type_params": [],
+      "fields": [
+        { "name": "epoch", "type": "u64" }
+      ]
+    },
+    {
+      "name": "Configuration",
+      "abilities": ["key"],
+      "type_params": [],
+      "fields": [
+        { "name": "epoch", "type": "u64" },
+        { "name": "last_reconfiguration_time", "type": "u64" },
+        { "name": "events", "type": "0000000000000000000000000000000000000000000000000000000000000001::Event::EventHandle" }
+      ]
+    },
+    {
+      "name": "DisableReconfiguration",
+      "abilities": ["key"],
+      "type_params": [],
+      "fields": [
+        { "name": "dummy_field", "type": "bool" }
+      ]
+    }
+  ],
+  "script_functions": [
+    {
+      "name": "force_reconfigure",
+      "type_params": [],
+      "params": [
+        { "name": "account", "type": "&signer" }
+      ]
+    }
+  ]
+}

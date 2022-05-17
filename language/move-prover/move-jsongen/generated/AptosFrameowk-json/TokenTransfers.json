@@ -1,0 +1,52 @@
+{
+  "address": "0000000000000000000000000000000000000000000000000000000000000001",
+  "module": "TokenTransfers",
+  "constants": [
+  ],
+  "structs": [
+    {
+      "name": "TokenTransfers",
+      "abilities": ["key"],
+      "type_params": [],
+      "fields": [
+        { "name": "pending_claims", "type": "0000000000000000000000000000000000000000000000000000000000000001::Table::Table" }
+      ]
+    }
+  ],
+  "script_functions": [
+    {
+      "name": "offer_script",
+      "type_params": [],
+      "params": [
+        { "name": "sender", "type": "signer" },
+        { "name": "receiver", "type": "address" },
+        { "name": "creator", "type": "address" },
+        { "name": "collection", "type": "vector<u8>" },
+        { "name": "name", "type": "vector<u8>" },
+        { "name": "amount", "type": "u64" }
+      ]
+    },
+    {
+      "name": "claim_script",
+      "type_params": [],
+      "params": [
+        { "name": "receiver", "type": "signer" },
+        { "name": "sender", "type": "address" },
+        { "name": "creator", "type": "address" },
+        { "name": "collection", "type": "vector<u8>" },
+        { "name": "name", "type": "vector<u8>" }
+      ]
+    },
+    {
+      "name": "cancel_offer_script",
+      "type_params": [],
+      "params": [
+        { "name": "sender", "type": "signer" },
+        { "name": "receiver", "type": "address" },
+        { "name": "creator", "type": "address" },
+        { "name": "collection", "type": "vector<u8>" },
+        { "name": "name", "type": "vector<u8>" }
+      ]
+    }
+  ]
+}

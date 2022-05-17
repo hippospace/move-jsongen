@@ -1,0 +1,44 @@
+{
+  "address": "0000000000000000000000000000000000000000000000000000000000000001",
+  "module": "GUID",
+  "constants": [
+    { "name": "EGUID_GENERATOR_NOT_PUBLISHED", "type": "u64", "value": "0" }
+  ],
+  "structs": [
+    {
+      "name": "Generator",
+      "abilities": ["key"],
+      "type_params": [],
+      "fields": [
+        { "name": "counter", "type": "u64" }
+      ]
+    },
+    {
+      "name": "GUID",
+      "abilities": ["drop", "store"],
+      "type_params": [],
+      "fields": [
+        { "name": "id", "type": "ID" }
+      ]
+    },
+    {
+      "name": "ID",
+      "abilities": ["copy", "drop", "store"],
+      "type_params": [],
+      "fields": [
+        { "name": "creation_num", "type": "u64" },
+        { "name": "addr", "type": "address" }
+      ]
+    },
+    {
+      "name": "CreateCapability",
+      "abilities": ["drop", "store", "key"],
+      "type_params": [],
+      "fields": [
+        { "name": "addr", "type": "address" }
+      ]
+    }
+  ],
+  "script_functions": [
+  ]
+}

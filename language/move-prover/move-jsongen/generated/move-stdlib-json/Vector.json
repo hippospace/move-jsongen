@@ -1,0 +1,11 @@
+{
+  "address": "0000000000000000000000000000000000000000000000000000000000000001",
+  "module": "Vector",
+  "constants": [
+    { "name": "EINDEX_OUT_OF_BOUNDS", "type": "u64", "value": "0" }
+  ],
+  "structs": [
+  ],
+  "script_functions": [
+  ]
+}

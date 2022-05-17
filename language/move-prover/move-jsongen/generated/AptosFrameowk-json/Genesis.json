@@ -1,0 +1,23 @@
+{
+  "address": "0000000000000000000000000000000000000000000000000000000000000001",
+  "module": "Genesis",
+  "constants": [
+  ],
+  "structs": [
+  ],
+  "script_functions": [
+    {
+      "name": "create_initialize_validators",
+      "type_params": [],
+      "params": [
+        { "name": "core_resource_account", "type": "signer" },
+        { "name": "owners", "type": "vector<address>" },
+        { "name": "owner_auth_keys", "type": "vector<vector<u8>>" },
+        { "name": "consensus_pubkeys", "type": "vector<vector<u8>>" },
+        { "name": "validator_network_addresses", "type": "vector<vector<u8>>" },
+        { "name": "full_node_network_addresses", "type": "vector<vector<u8>>" },
+        { "name": "staking_distribution", "type": "vector<u64>" }
+      ]
+    }
+  ]
+}

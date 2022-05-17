@@ -1,0 +1,115 @@
+{
+  "address": "0000000000000000000000000000000000000000000000000000000000000001",
+  "module": "Coin",
+  "constants": [
+    { "name": "EINSUFFICIENT_BALANCE", "type": "u64", "value": "5" },
+    { "name": "ECOIN_INFO_ADDRESS_MISMATCH", "type": "u64", "value": "0" },
+    { "name": "ECOIN_INFO_ALREADY_PUBLISHED", "type": "u64", "value": "1" },
+    { "name": "ECOIN_INFO_NOT_PUBLISHED", "type": "u64", "value": "2" },
+    { "name": "ECOIN_STORE_ALREADY_PUBLISHED", "type": "u64", "value": "3" },
+    { "name": "ECOIN_STORE_NOT_PUBLISHED", "type": "u64", "value": "4" },
+    { "name": "EDESTRUCTION_OF_NONZERO_TOKEN", "type": "u64", "value": "6" }
+  ],
+  "structs": [
+    {
+      "name": "CoinEvents",
+      "abilities": ["key"],
+      "type_params": [],
+      "fields": [
+        { "name": "register_events", "type": "0000000000000000000000000000000000000000000000000000000000000001::Event::EventHandle" }
+      ]
+    },
+    {
+      "name": "Coin",
+      "abilities": ["store"],
+      "type_params": [
+        { "name": "$tv0", "abilities": [], "is_phantom": true }
+      ],
+      "fields": [
+        { "name": "value", "type": "u64" }
+      ]
+    },
+    {
+      "name": "CoinStore",
+      "abilities": ["key"],
+      "type_params": [
+        { "name": "$tv0", "abilities": [], "is_phantom": true }
+      ],
+      "fields": [
+        { "name": "coin", "type": "Coin" },
+        { "name": "deposit_events", "type": "0000000000000000000000000000000000000000000000000000000000000001::Event::EventHandle" },
+        { "name": "withdraw_events", "type": "0000000000000000000000000000000000000000000000000000000000000001::Event::EventHandle" }
+      ]
+    },
+    {
+      "name": "CoinInfo",
+      "abilities": ["key"],
+      "type_params": [
+        { "name": "$tv0", "abilities": [], "is_phantom": true }
+      ],
+      "fields": [
+        { "name": "name", "type": "0000000000000000000000000000000000000000000000000000000000000001::ASCII::String" },
+        { "name": "symbol", "type": "0000000000000000000000000000000000000000000000000000000000000001::ASCII::String" },
+        { "name": "decimals", "type": "u64" },
+        { "name": "supply", "type": "0000000000000000000000000000000000000000000000000000000000000001::Option::Option" }
+      ]
+    },
+    {
+      "name": "DepositEvent",
+      "abilities": ["drop", "store"],
+      "type_params": [],
+      "fields": [
+        { "name": "amount", "type": "u64" }
+      ]
+    },
+    {
+      "name": "WithdrawEvent",
+      "abilities": ["drop", "store"],
+      "type_params": [],
+      "fields": [
+        { "name": "amount", "type": "u64" }
+      ]
+    },
+    {
+      "name": "RegisterEvent",
+      "abilities": ["drop", "store"],
+      "type_params": [],
+      "fields": [
+        { "name": "type_info", "type": "0000000000000000000000000000000000000000000000000000000000000001::TypeInfo::TypeInfo" }
+      ]
+    },
+    {
+      "name": "MintCapability",
+      "abilities": ["copy", "store", "key"],
+      "type_params": [
+        { "name": "$tv0", "abilities": [], "is_phantom": true }
+      ],
+      "fields": [
+        { "name": "dummy_field", "type": "bool" }
+      ]
+    },
+    {
+      "name": "BurnCapability",
+      "abilities": ["copy", "store", "key"],
+      "type_params": [
+        { "name": "$tv0", "abilities": [], "is_phantom": true }
+      ],
+      "fields": [
+        { "name": "dummy_field", "type": "bool" }
+      ]
+    }
+  ],
+  "script_functions": [
+    {
+      "name": "transfer",
+      "type_params": [
+        { "name": "$tv0", "abilities": [], "is_phantom": false }
+      ],
+      "params": [
+        { "name": "from", "type": "&signer" },
+        { "name": "to", "type": "address" },
+        { "name": "amount", "type": "u64" }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,22 @@
+{
+  "address": "0000000000000000000000000000000000000000000000000000000000000001",
+  "module": "Option",
+  "constants": [
+    { "name": "EOPTION_IS_SET", "type": "u64", "value": "0" },
+    { "name": "EOPTION_NOT_SET", "type": "u64", "value": "1" }
+  ],
+  "structs": [
+    {
+      "name": "Option",
+      "abilities": ["copy", "drop", "store"],
+      "type_params": [
+        { "name": "$tv0", "abilities": [], "is_phantom": false }
+      ],
+      "fields": [
+        { "name": "vec", "type": "vector<$tv0>" }
+      ]
+    }
+  ],
+  "script_functions": [
+  ]
+}

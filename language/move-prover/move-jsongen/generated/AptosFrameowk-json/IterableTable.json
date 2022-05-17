@@ -1,0 +1,36 @@
+{
+  "address": "0000000000000000000000000000000000000000000000000000000000000001",
+  "module": "IterableTable",
+  "constants": [
+  ],
+  "structs": [
+    {
+      "name": "IterableValue",
+      "abilities": ["store"],
+      "type_params": [
+        { "name": "$tv0", "abilities": ["copy", "drop", "store"], "is_phantom": false },
+        { "name": "$tv1", "abilities": ["store"], "is_phantom": false }
+      ],
+      "fields": [
+        { "name": "val", "type": "$tv1" },
+        { "name": "prev", "type": "0000000000000000000000000000000000000000000000000000000000000001::Option::Option" },
+        { "name": "next", "type": "0000000000000000000000000000000000000000000000000000000000000001::Option::Option" }
+      ]
+    },
+    {
+      "name": "IterableTable",
+      "abilities": ["store"],
+      "type_params": [
+        { "name": "$tv0", "abilities": ["copy", "drop", "store"], "is_phantom": false },
+        { "name": "$tv1", "abilities": ["store"], "is_phantom": false }
+      ],
+      "fields": [
+        { "name": "inner", "type": "0000000000000000000000000000000000000000000000000000000000000001::Table::Table" },
+        { "name": "head", "type": "0000000000000000000000000000000000000000000000000000000000000001::Option::Option" },
+        { "name": "tail", "type": "0000000000000000000000000000000000000000000000000000000000000001::Option::Option" }
+      ]
+    }
+  ],
+  "script_functions": [
+  ]
+}

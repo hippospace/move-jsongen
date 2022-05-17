@@ -1,0 +1,20 @@
+{
+  "address": "0000000000000000000000000000000000000000000000000000000000000001",
+  "module": "TypeInfo",
+  "constants": [
+  ],
+  "structs": [
+    {
+      "name": "TypeInfo",
+      "abilities": ["copy", "drop", "store"],
+      "type_params": [],
+      "fields": [
+        { "name": "account_address", "type": "address" },
+        { "name": "module_name", "type": "vector<u8>" },
+        { "name": "struct_name", "type": "vector<u8>" }
+      ]
+    }
+  ],
+  "script_functions": [
+  ]
+}

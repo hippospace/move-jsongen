@@ -1,0 +1,39 @@
+{
+  "address": "0000000000000000000000000000000000000000000000000000000000000001",
+  "module": "Event",
+  "constants": [
+  ],
+  "structs": [
+    {
+      "name": "GUIDWrapper",
+      "abilities": ["drop", "store"],
+      "type_params": [],
+      "fields": [
+        { "name": "len_bytes", "type": "u8" },
+        { "name": "guid", "type": "0000000000000000000000000000000000000000000000000000000000000001::GUID::GUID" }
+      ]
+    },
+    {
+      "name": "EventHandle",
+      "abilities": ["store"],
+      "type_params": [
+        { "name": "$tv0", "abilities": ["drop", "store"], "is_phantom": true }
+      ],
+      "fields": [
+        { "name": "counter", "type": "u64" },
+        { "name": "guid", "type": "GUIDWrapper" }
+      ]
+    },
+    {
+      "name": "EventHandleGenerator",
+      "abilities": ["key"],
+      "type_params": [],
+      "fields": [
+        { "name": "counter", "type": "u64" },
+        { "name": "addr", "type": "address" }
+      ]
+    }
+  ],
+  "script_functions": [
+  ]
+}

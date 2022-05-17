@@ -1,0 +1,28 @@
+{
+  "address": "0000000000000000000000000000000000000000000000000000000000000001",
+  "module": "TransactionPublishingOption",
+  "constants": [
+    { "name": "ECONFIG", "type": "u64", "value": "1" }
+  ],
+  "structs": [
+    {
+      "name": "TransactionPublishingOption",
+      "abilities": ["key"],
+      "type_params": [],
+      "fields": [
+        { "name": "script_allow_list", "type": "vector<vector<u8>>" },
+        { "name": "module_publishing_allowed", "type": "bool" }
+      ]
+    }
+  ],
+  "script_functions": [
+    {
+      "name": "set_module_publishing_allowed",
+      "type_params": [],
+      "params": [
+        { "name": "account", "type": "signer" },
+        { "name": "is_allowed", "type": "bool" }
+      ]
+    }
+  ]
+}

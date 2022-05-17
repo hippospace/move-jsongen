@@ -1,0 +1,20 @@
+{
+  "address": "0000000000000000000000000000000000000000000000000000000000000001",
+  "module": "ACL",
+  "constants": [
+    { "name": "ECONTAIN", "type": "u64", "value": "0" },
+    { "name": "ENOT_CONTAIN", "type": "u64", "value": "1" }
+  ],
+  "structs": [
+    {
+      "name": "ACL",
+      "abilities": ["copy", "drop", "store"],
+      "type_params": [],
+      "fields": [
+        { "name": "list", "type": "vector<address>" }
+      ]
+    }
+  ],
+  "script_functions": [
+  ]
+}

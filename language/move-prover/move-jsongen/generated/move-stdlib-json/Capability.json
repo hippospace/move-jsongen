@@ -1,0 +1,52 @@
+{
+  "address": "0000000000000000000000000000000000000000000000000000000000000001",
+  "module": "Capability",
+  "constants": [
+    { "name": "ECAP", "type": "u64", "value": "0" },
+    { "name": "EDELEGATE", "type": "u64", "value": "1" }
+  ],
+  "structs": [
+    {
+      "name": "Cap",
+      "abilities": ["copy", "drop"],
+      "type_params": [
+        { "name": "$tv0", "abilities": [], "is_phantom": true }
+      ],
+      "fields": [
+        { "name": "root", "type": "address" }
+      ]
+    },
+    {
+      "name": "LinearCap",
+      "abilities": ["drop"],
+      "type_params": [
+        { "name": "$tv0", "abilities": [], "is_phantom": true }
+      ],
+      "fields": [
+        { "name": "root", "type": "address" }
+      ]
+    },
+    {
+      "name": "CapState",
+      "abilities": ["key"],
+      "type_params": [
+        { "name": "$tv0", "abilities": [], "is_phantom": true }
+      ],
+      "fields": [
+        { "name": "delegates", "type": "vector<address>" }
+      ]
+    },
+    {
+      "name": "CapDelegateState",
+      "abilities": ["key"],
+      "type_params": [
+        { "name": "$tv0", "abilities": [], "is_phantom": true }
+      ],
+      "fields": [
+        { "name": "root", "type": "address" }
+      ]
+    }
+  ],
+  "script_functions": [
+  ]
+}

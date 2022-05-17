@@ -1,0 +1,23 @@
+{
+  "address": "0000000000000000000000000000000000000000000000000000000000000001",
+  "module": "BitVector",
+  "constants": [
+    { "name": "EINDEX", "type": "u64", "value": "0" },
+    { "name": "ELENGTH", "type": "u64", "value": "1" },
+    { "name": "MAX_SIZE", "type": "u64", "value": "1024" },
+    { "name": "WORD_SIZE", "type": "u64", "value": "1" }
+  ],
+  "structs": [
+    {
+      "name": "BitVector",
+      "abilities": ["copy", "drop", "store"],
+      "type_params": [],
+      "fields": [
+        { "name": "length", "type": "u64" },
+        { "name": "bit_field", "type": "vector<bool>" }
+      ]
+    }
+  ],
+  "script_functions": [
+  ]
+}

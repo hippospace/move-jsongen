@@ -1,0 +1,28 @@
+{
+  "address": "0000000000000000000000000000000000000000000000000000000000000001",
+  "module": "Version",
+  "constants": [
+    { "name": "ECONFIG", "type": "u64", "value": "0" },
+    { "name": "EINVALID_MAJOR_VERSION_NUMBER", "type": "u64", "value": "1" }
+  ],
+  "structs": [
+    {
+      "name": "Version",
+      "abilities": ["copy", "drop", "store", "key"],
+      "type_params": [],
+      "fields": [
+        { "name": "major", "type": "u64" }
+      ]
+    }
+  ],
+  "script_functions": [
+    {
+      "name": "set_version",
+      "type_params": [],
+      "params": [
+        { "name": "account", "type": "signer" },
+        { "name": "major", "type": "u64" }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,20 @@
+{
+  "address": "0000000000000000000000000000000000000000000000000000000000000001",
+  "module": "Errors",
+  "constants": [
+    { "name": "ALREADY_PUBLISHED", "type": "u8", "value": "6" },
+    { "name": "CUSTOM", "type": "u8", "value": "255" },
+    { "name": "INTERNAL", "type": "u8", "value": "10" },
+    { "name": "INVALID_ARGUMENT", "type": "u8", "value": "7" },
+    { "name": "INVALID_STATE", "type": "u8", "value": "1" },
+    { "name": "LIMIT_EXCEEDED", "type": "u8", "value": "8" },
+    { "name": "NOT_PUBLISHED", "type": "u8", "value": "5" },
+    { "name": "REQUIRES_ADDRESS", "type": "u8", "value": "2" },
+    { "name": "REQUIRES_CAPABILITY", "type": "u8", "value": "4" },
+    { "name": "REQUIRES_ROLE", "type": "u8", "value": "3" }
+  ],
+  "structs": [
+  ],
+  "script_functions": [
+  ]
+}

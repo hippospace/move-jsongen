@@ -1,0 +1,22 @@
+{
+  "address": "0000000000000000000000000000000000000000000000000000000000000001",
+  "module": "Timestamp",
+  "constants": [
+    { "name": "ENOT_GENESIS", "type": "u64", "value": "0" },
+    { "name": "ENOT_OPERATING", "type": "u64", "value": "1" },
+    { "name": "ETIMESTAMP", "type": "u64", "value": "2" },
+    { "name": "MICRO_CONVERSION_FACTOR", "type": "u64", "value": "1000000" }
+  ],
+  "structs": [
+    {
+      "name": "CurrentTimeMicroseconds",
+      "abilities": ["key"],
+      "type_params": [],
+      "fields": [
+        { "name": "microseconds", "type": "u64" }
+      ]
+    }
+  ],
+  "script_functions": [
+  ]
+}

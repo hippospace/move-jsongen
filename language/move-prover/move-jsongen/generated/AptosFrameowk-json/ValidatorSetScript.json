@@ -1,0 +1,75 @@
+{
+  "address": "0000000000000000000000000000000000000000000000000000000000000001",
+  "module": "ValidatorSetScript",
+  "constants": [
+  ],
+  "structs": [
+  ],
+  "script_functions": [
+    {
+      "name": "register_validator_config",
+      "type_params": [],
+      "params": [
+        { "name": "_validator_operator_account", "type": "signer" },
+        { "name": "_validator_address", "type": "address" },
+        { "name": "_consensus_pubkey", "type": "vector<u8>" },
+        { "name": "_validator_network_addresses", "type": "vector<u8>" },
+        { "name": "_fullnode_network_addresses", "type": "vector<u8>" }
+      ]
+    },
+    {
+      "name": "set_validator_operator",
+      "type_params": [],
+      "params": [
+        { "name": "_account", "type": "signer" },
+        { "name": "_operator_name", "type": "vector<u8>" },
+        { "name": "_operator_account", "type": "address" }
+      ]
+    },
+    {
+      "name": "set_validator_config_and_reconfigure",
+      "type_params": [],
+      "params": [
+        { "name": "_validator_operator_account", "type": "signer" },
+        { "name": "_validator_account", "type": "address" },
+        { "name": "_consensus_pubkey", "type": "vector<u8>" },
+        { "name": "_validator_network_addresses", "type": "vector<u8>" },
+        { "name": "_fullnode_network_addresses", "type": "vector<u8>" }
+      ]
+    },
+    {
+      "name": "create_validator_account",
+      "type_params": [],
+      "params": [
+        { "name": "_core_resource", "type": "signer" },
+        { "name": "_new_account_address", "type": "address" },
+        { "name": "_human_name", "type": "vector<u8>" }
+      ]
+    },
+    {
+      "name": "create_validator_operator_account",
+      "type_params": [],
+      "params": [
+        { "name": "_core_resource", "type": "signer" },
+        { "name": "_new_account_address", "type": "address" },
+        { "name": "_human_name", "type": "vector<u8>" }
+      ]
+    },
+    {
+      "name": "add_validator",
+      "type_params": [],
+      "params": [
+        { "name": "_account", "type": "signer" },
+        { "name": "_validator_addr", "type": "address" }
+      ]
+    },
+    {
+      "name": "remove_validator",
+      "type_params": [],
+      "params": [
+        { "name": "_account", "type": "signer" },
+        { "name": "_validator_addr", "type": "address" }
+      ]
+    }
+  ]
+}

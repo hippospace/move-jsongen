@@ -1,0 +1,12 @@
+{
+  "address": "0000000000000000000000000000000000000000000000000000000000000001",
+  "module": "SystemAddresses",
+  "constants": [
+    { "name": "ENOT_CORE_RESOURCE_ADDRESS", "type": "u64", "value": "0" },
+    { "name": "EVM", "type": "u64", "value": "1" }
+  ],
+  "structs": [
+  ],
+  "script_functions": [
+  ]
+}
