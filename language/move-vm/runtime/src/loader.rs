@@ -20,6 +20,7 @@ use move_binary_format::{
     IndexKind,
 };
 use move_bytecode_verifier::{self, cyclic_dependencies, dependencies};
+use move_core_types::account_address::AccountAddress;
 use move_core_types::{
     identifier::{IdentStr, Identifier},
     language_storage::{ModuleId, StructTag, TypeTag},
@@ -632,8 +633,10 @@ impl Loader {
     ) -> VMResult<()> {
         let mut bundle_unverified: BTreeSet<_> = modules.iter().map(|m| m.self_id()).collect();
         let mut bundle_verified = BTreeMap::new();
+        println!("Received {} compiled modules", modules.len());
         for module in modules {
             let module_id = module.self_id();
+            println!("Verifying {}", module_id);
             bundle_unverified.remove(&module_id);
 
             self.verify_module_for_publication(
@@ -642,6 +645,7 @@ impl Loader {
                 &bundle_unverified,
                 data_store,
             )?;
+            println!("Adding {} into verified bundle", module_id);
             bundle_verified.insert(module_id.clone(), module.clone());
         }
         Ok(())
@@ -918,12 +922,15 @@ impl Loader {
         }
 
         // module self-check
+        println!("Trying to load_and_verify_module: {}, allow_fail={}", id, allow_module_loading_failure);
         let module = self.load_and_verify_module(id, data_store, allow_module_loading_failure)?;
+        println!("Loaded into visited: {}", id);
         visited.insert(id.clone());
         friends_discovered.extend(module.immediate_friends());
 
         // downward exploration of the module's dependency graph. For a module that is loaded from
         // the data_store, we should never allow its dependencies to fail to load.
+        println!("Trying to load_and_verify_dependencies: {}, allow_fail={}", id, false);
         self.load_and_verify_dependencies(
             &module,
             bundle_verified,
@@ -957,28 +964,40 @@ impl Loader {
         // - the data store (i.e., not loaded to code cache yet)
         let mut bundle_deps = vec![];
         let mut cached_deps = vec![];
+        println!("Verifying bundle");
         for module_id in module.immediate_dependencies() {
             if let Some(cached) = bundle_verified.get(&module_id) {
+                println!("In-bundle: {}", module_id);
                 bundle_deps.push(cached);
             } else {
+                println!("Not in bundle, looking in cache: {}", module_id);
                 let locked_cache = self.module_cache.read();
                 let loaded = match locked_cache.module_at(&module_id) {
                     None => {
                         drop(locked_cache); // explicit unlock
-                        self.load_and_verify_module_and_dependencies(
+                        let result = self.load_and_verify_module_and_dependencies(
                             &module_id,
                             bundle_verified,
                             data_store,
                             visited,
                             friends_discovered,
                             allow_dependency_loading_failure,
-                        )?
+                        );
+                        if result.is_err() {
+                            println!("Bundle length: {}", bundle_verified.len());
+                            for (mod_id, module) in bundle_verified.into_iter() {
+                                println!("Bundle module: {}", mod_id);
+                            }
+                        }
+                        assert!(result.is_ok(), "Failed loading ");
+                        result?
                     }
                     Some(cached) => cached,
                 };
                 cached_deps.push(loaded);
             }
         }
+        println!("Verifying bundle complete");
 
         // once all dependencies are loaded, do the linking check
         let all_imm_deps = bundle_deps

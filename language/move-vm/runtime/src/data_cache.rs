@@ -212,9 +212,12 @@ impl<'r, 'l, S: MoveResolver> DataStore for TransactionDataCache<'r, 'l, S> {
         }
         match self.remote.get_module(module_id) {
             Ok(Some(bytes)) => Ok(bytes),
-            Ok(None) => Err(PartialVMError::new(StatusCode::LINKER_ERROR)
-                .with_message(format!("Cannot find {:?} in data cache", module_id))
-                .finish(Location::Undefined)),
+            Ok(None) => {
+                println!("Missing {}", module_id);
+                Err(PartialVMError::new(StatusCode::LINKER_ERROR)
+                    .with_message(format!("Cannot find {:?} in data cache", module_id))
+                    .finish(Location::Undefined))
+            }
             Err(err) => {
                 let msg = format!("Unexpected storage error: {:?}", err);
                 Err(

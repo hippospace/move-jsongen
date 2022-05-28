@@ -77,6 +77,7 @@ impl VMRuntime {
     ) -> VMResult<()> {
         // deserialize the modules. Perform bounds check. After this indexes can be
         // used with the `[]` operator
+        println!("Trying to deserialize {} modules", modules.len());
         let compiled_modules = match modules
             .iter()
             .map(|blob| CompiledModule::deserialize(blob))
@@ -88,6 +89,7 @@ impl VMRuntime {
                 return Err(err.finish(Location::Undefined));
             }
         };
+        println!("Deserialized {} modules", compiled_modules.len());
 
         // Make sure all modules' self addresses matches the transaction sender. The self address is
         // where the module will actually be published. If we did not check this, the sender could
@@ -101,6 +103,7 @@ impl VMRuntime {
                 )
                 .finish(Location::Undefined));
             }
+            println!("Compiled module: {}", module.self_id());
         }
 
         // Collect ids for modules that are published together
