@@ -598,7 +598,7 @@ checksum = "410208eb08c3f3ad44b95b51c4fc0d5993cbcc9dd39cfadb4214b9115a97dcb5"
 dependencies = [
  "ansi_term 0.12.1",
  "dissimilar",
- "itertools 0.10.1",
+ "itertools 0.10.3",
 ]
 
 [[package]]
@@ -668,7 +668,7 @@ dependencies = [
  "clap 2.33.3",
  "criterion-plot",
  "csv",
- "itertools 0.10.1",
+ "itertools 0.10.3",
  "lazy_static 1.4.0",
  "num-traits 0.2.14",
  "oorandom",
@@ -918,7 +918,7 @@ dependencies = [
  "camino",
  "globset",
  "guppy",
- "itertools 0.10.1",
+ "itertools 0.10.3",
  "once_cell",
  "petgraph 0.6.0",
  "rayon",
@@ -1018,7 +1018,7 @@ version = "0.10.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "3c0ff24a73b51d9009c40897faf87d31b77345c90ffbf4dc3a1d2957032c5653"
 dependencies = [
- "itertools 0.10.1",
+ "itertools 0.10.3",
 ]
 
 [[package]]
@@ -1576,7 +1576,7 @@ dependencies = [
  "guppy-summaries",
  "guppy-workspace-hack",
  "indexmap",
- "itertools 0.10.1",
+ "itertools 0.10.3",
  "nested",
  "once_cell",
  "pathdiff",
@@ -1861,9 +1861,9 @@ dependencies = [
 
 [[package]]
 name = "itertools"
-version = "0.10.1"
+version = "0.10.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "69ddb889f9d0d08a67338271fa9b62996bc788c7796a5c18cf057420aaed5eaf"
+checksum = "a9a9d19fa1e79b6215ff29b9d6880b706147f16e9b1dbb1e4e5947b5b02bc5e3"
 dependencies = [
  "either",
 ]
@@ -2121,7 +2121,7 @@ dependencies = [
  "bcs",
  "better_any",
  "datatest-stable",
- "itertools 0.10.1",
+ "itertools 0.10.3",
  "move-binary-format",
  "move-command-line-common",
  "move-compiler",
@@ -2218,7 +2218,7 @@ dependencies = [
  "colored",
  "datatest-stable",
  "difference",
- "itertools 0.10.1",
+ "itertools 0.10.3",
  "move-binary-format",
  "move-bytecode-source-map",
  "move-bytecode-utils",
@@ -2363,7 +2363,7 @@ dependencies = [
  "codespan",
  "codespan-reporting",
  "datatest-stable",
- "itertools 0.10.1",
+ "itertools 0.10.3",
  "log",
  "move-compiler",
  "move-model",
@@ -2480,7 +2480,7 @@ dependencies = [
  "codespan-reporting",
  "datatest-stable",
  "internment",
- "itertools 0.10.1",
+ "itertools 0.10.3",
  "log",
  "move-binary-format",
  "move-bytecode-source-map",
@@ -2548,7 +2548,7 @@ dependencies = [
  "datatest-stable",
  "futures",
  "hex",
- "itertools 0.10.1",
+ "itertools 0.10.3",
  "log",
  "move-abigen",
  "move-binary-format",
@@ -2585,7 +2585,7 @@ dependencies = [
  "codespan",
  "codespan-reporting",
  "futures",
- "itertools 0.10.1",
+ "itertools 0.10.3",
  "log",
  "move-binary-format",
  "move-command-line-common",
@@ -2647,7 +2647,7 @@ dependencies = [
  "datatest-stable",
  "ethnum",
  "im",
- "itertools 0.10.1",
+ "itertools 0.10.3",
  "log",
  "move-binary-format",
  "move-borrow-graph",
@@ -2676,7 +2676,7 @@ dependencies = [
  "clap 3.1.8",
  "codespan-reporting",
  "datatest-stable",
- "itertools 0.10.1",
+ "itertools 0.10.3",
  "move-binary-format",
  "move-core-types",
  "move-model",
@@ -2743,6 +2743,19 @@ dependencies = [
 ]
 
 [[package]]
+name = "move-to-ts"
+version = "0.1.0"
+dependencies = [
+ "clap 3.1.8",
+ "itertools 0.10.3",
+ "move-command-line-common",
+ "move-compiler",
+ "move-core-types",
+ "move-ir-types",
+ "move-package",
+]
+
+[[package]]
 name = "move-to-yul"
 version = "0.1.0"
 dependencies = [
@@ -2756,7 +2769,7 @@ dependencies = [
  "evm",
  "evm-exec-utils",
  "hex",
- "itertools 0.10.1",
+ "itertools 0.10.3",
  "log",
  "maplit",
  "move-binary-format",
@@ -2828,7 +2841,7 @@ dependencies = [
  "difference",
  "evm",
  "evm-exec-utils",
- "itertools 0.10.1",
+ "itertools 0.10.3",
  "move-binary-format",
  "move-bytecode-utils",
  "move-command-line-common",
@@ -3639,7 +3652,7 @@ dependencies = [
  "clap 3.1.8",
  "codespan-reporting",
  "hex",
- "itertools 0.10.1",
+ "itertools 0.10.3",
  "log",
  "move-compiler",
  "move-model",
@@ -3663,7 +3676,7 @@ dependencies = [
  "codespan",
  "codespan-reporting",
  "hex",
- "itertools 0.10.1",
+ "itertools 0.10.3",
  "log",
  "move-compiler",
  "move-model",
@@ -4442,7 +4455,7 @@ version = "0.1.0"
 dependencies = [
  "anyhow",
  "clap 3.1.8",
- "itertools 0.10.1",
+ "itertools 0.10.3",
  "move-compiler",
  "move-model",
  "move-prover",
@@ -4666,7 +4679,7 @@ dependencies = [
  "crossbeam-channel",
  "getrandom 0.2.2",
  "hex",
- "itertools 0.10.1",
+ "itertools 0.10.3",
  "module-generation",
  "move-binary-format",
  "move-bytecode-verifier",

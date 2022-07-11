@@ -64,6 +64,7 @@ members = [
     "language/tools/move-explain",
     "language/tools/move-package",
     "language/tools/move-resource-viewer",
+    "language/tools/move-to-ts",
     "language/tools/move-unit-test",
     "language/tools/read-write-set",
     "language/tools/read-write-set/dynamic",
