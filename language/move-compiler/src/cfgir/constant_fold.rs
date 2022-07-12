@@ -45,7 +45,7 @@ pub fn optimize(cfg: &mut BlockCFG) -> bool {
 fn optimize_cmd(sp!(_, cmd_): &mut Command) -> Option<bool> {
     use Command_ as C;
     Some(match cmd_ {
-        C::Assign(_ls, e) => optimize_exp(e),
+        C::Assign(_ls, e, _) => optimize_exp(e),
         C::Mutate(el, er) => {
             let c1 = optimize_exp(er);
             let c2 = optimize_exp(el);

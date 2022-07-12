@@ -544,7 +544,7 @@ fn block(
                 let expected_tys = expected_types(context, sloc, ty);
                 let res = exp_(context, result, Some(&expected_tys), *e);
                 declare_bind_list(context, &binds);
-                assign_command(context, result, sloc, binds, res);
+                assign_command(context, result, sloc, binds, res, true);
             }
         }
     }
@@ -651,6 +651,7 @@ fn assign_command(
     loc: Loc,
     sp!(_, assigns): T::LValueList,
     rvalue: H::Exp,
+    is_new_decl: bool,
 ) {
     use H::{Command_ as C, Statement_ as S};
     let mut lvalues = vec![];
@@ -664,7 +665,7 @@ fn assign_command(
     }
     result.push_back(sp(
         loc,
-        S::Command(sp(loc, C::Assign(lvalues, Box::new(rvalue)))),
+        S::Command(sp(loc, C::Assign(lvalues, Box::new(rvalue), is_new_decl))),
     ));
     result.append(&mut after);
 }
@@ -713,7 +714,7 @@ fn assign(
                 let borrow_ = E::Borrow(mut_, Box::new(copy_tmp()), f);
                 let borrow_ty = H::Type_::single(sp(floc, H::SingleType_::Ref(mut_, bt)));
                 let borrow = H::exp(borrow_ty, sp(floc, borrow_));
-                assign_command(context, &mut after, floc, sp(floc, vec![tfa]), borrow);
+                assign_command(context, &mut after, floc, sp(floc, vec![tfa]), borrow, true);
             }
             L::Var(tmp, Box::new(rvalue_ty.clone()))
         }
@@ -1102,7 +1103,7 @@ fn exp_impl(
         TE::Assign(assigns, lvalue_ty, te) => {
             let expected_type = expected_types(context, eloc, lvalue_ty);
             let e = exp_(context, result, Some(&expected_type), *te);
-            assign_command(context, result, eloc, assigns, e);
+            assign_command(context, result, eloc, assigns, e, false);
             HE::Unit {
                 case: H::UnitCase::Implicit,
             }
@@ -1439,7 +1440,7 @@ fn bind_exp_impl_(
         .iter()
         .map(|(v, st)| sp(v.loc(), H::LValue_::Var(*v, Box::new(st.clone()))))
         .collect();
-    let asgn = sp(loc, C::Assign(lvalues, Box::new(e)));
+    let asgn = sp(loc, C::Assign(lvalues, Box::new(e), false));
     result.push_back(sp(loc, S::Command(asgn)));
 
     let mut etemps = tmps
@@ -1607,7 +1608,7 @@ fn freeze(context: &mut Context, result: &mut Block, expected_type: &H::Type, e:
                 .cloned()
                 .map(|(v, ty)| sp(loc, H::LValue_::Var(v, Box::new(ty))))
                 .collect::<Vec<_>>();
-            let assign = sp(loc, H::Command_::Assign(lvalues, Box::new(e)));
+            let assign = sp(loc, H::Command_::Assign(lvalues, Box::new(e), false));
             result.push_back(sp(loc, H::Statement_::Command(assign)));
 
             let exps = new_temps
@@ -1964,7 +1965,7 @@ fn remove_unused_bindings_statement(unused: &BTreeSet<Var>, sp!(_, s_): &mut H::
 fn remove_unused_bindings_command(unused: &BTreeSet<Var>, sp!(_, c_): &mut H::Command) {
     use H::Command_ as HC;
 
-    if let HC::Assign(ls, _) = c_ {
+    if let HC::Assign(ls, _, _) = c_ {
         remove_unused_bindings_lvalues(unused, ls)
     }
 }

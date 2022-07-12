@@ -630,7 +630,7 @@ fn block_(context: &mut Context, cur_label: &mut Label, blocks: H::Block) -> Bas
 fn command(context: &Context, sp!(_, hc_): &mut H::Command) {
     use H::Command_ as C;
     match hc_ {
-        C::Assign(_, _)
+        C::Assign(_, _, _)
         | C::Mutate(_, _)
         | C::Abort(_)
         | C::Return { .. }

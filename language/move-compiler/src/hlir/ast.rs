@@ -197,7 +197,7 @@ pub struct Label(pub usize);
 #[derive(Debug, PartialEq, Clone)]
 #[allow(clippy::large_enum_variant)]
 pub enum Command_ {
-    Assign(Vec<LValue>, Box<Exp>),
+    Assign(Vec<LValue>, Box<Exp>, bool), // (lvalues, rhs, is_new_decl)
     Mutate(Box<Exp>, Box<Exp>),
     Abort(Exp),
     Return {
@@ -359,7 +359,7 @@ impl Command_ {
         use Command_::*;
         match self {
             Break | Continue => panic!("ICE break/continue not translated to jumps"),
-            Assign(_, _) | Mutate(_, _) | IgnoreAndPop { .. } => false,
+            Assign(_, _, _) | Mutate(_, _) | IgnoreAndPop { .. } => false,
             Abort(_) | Return { .. } | Jump { .. } | JumpIf { .. } => true,
         }
     }
@@ -368,7 +368,7 @@ impl Command_ {
         use Command_::*;
         match self {
             Break | Continue => panic!("ICE break/continue not translated to jumps"),
-            Assign(_, _) | Mutate(_, _) | IgnoreAndPop { .. } | Jump { .. } | JumpIf { .. } => {
+            Assign(_, _, _) | Mutate(_, _) | IgnoreAndPop { .. } | Jump { .. } | JumpIf { .. } => {
                 false
             }
             Abort(_) | Return { .. } => true,
@@ -379,7 +379,7 @@ impl Command_ {
         use Command_::*;
         match self {
             Break | Continue => panic!("ICE break/continue not translated to jumps"),
-            Assign(ls, e) => ls.is_empty() && e.is_unit(),
+            Assign(ls, e, _) => ls.is_empty() && e.is_unit(),
             IgnoreAndPop { exp: e, .. } => e.is_unit(),
 
             Mutate(_, _) | Return { .. } | Abort(_) | JumpIf { .. } | Jump { .. } => false,
@@ -392,7 +392,7 @@ impl Command_ {
         let mut successors = BTreeSet::new();
         match self {
             Break | Continue => panic!("ICE break/continue not translated to jumps"),
-            Mutate(_, _) | Assign(_, _) | IgnoreAndPop { .. } => {
+            Mutate(_, _) | Assign(_, _, _) | IgnoreAndPop { .. } => {
                 panic!("ICE Should not be last command in block")
             }
             Abort(_) | Return { .. } => (),
@@ -930,7 +930,10 @@ impl AstDebug for Command_ {
     fn ast_debug(&self, w: &mut AstWriter) {
         use Command_ as C;
         match self {
-            C::Assign(lvalues, rhs) => {
+            C::Assign(lvalues, rhs, is_new_decl) => {
+                if *is_new_decl {
+                    w.write("(new)");
+                }
                 lvalues.ast_debug(w);
                 w.write(" = ");
                 rhs.ast_debug(w);

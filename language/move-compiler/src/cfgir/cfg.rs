@@ -257,7 +257,7 @@ fn dead_code_error(diags: &mut Diagnostics, block: &BasicBlock) {
 fn unreachable_loc(sp!(_, cmd_): &Command) -> Option<Loc> {
     use Command_ as C;
     match cmd_ {
-        C::Assign(_, e) => unreachable_loc_exp(e),
+        C::Assign(_, e, _) => unreachable_loc_exp(e),
         C::Mutate(el, er) => unreachable_loc_exp(el).or_else(|| unreachable_loc_exp(er)),
         C::Return { exp: e, .. }
         | C::Abort(e)
@@ -406,7 +406,7 @@ fn maybe_unmark_infinite_loop_starts(
 
         C::Jump { .. }
         | C::JumpIf { .. }
-        | C::Assign(_, _)
+        | C::Assign(_, _, _)
         | C::Mutate(_, _)
         | C::IgnoreAndPop { .. } => (),
         C::Break | C::Continue => panic!("ICE break/continue not translated to jumps"),

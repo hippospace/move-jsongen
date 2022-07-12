@@ -860,7 +860,7 @@ fn command(context: &mut Context, code: &mut IR::BytecodeBlock, sp!(loc, cmd_): 
     use H::Command_ as C;
     use IR::Bytecode_ as B;
     match cmd_ {
-        C::Assign(ls, e) => {
+        C::Assign(ls, e, _) => {
             exp(context, code, e);
             lvalues(context, code, ls);
         }

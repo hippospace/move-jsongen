@@ -132,7 +132,7 @@ pub fn verify(
 fn command(context: &mut Context, sp!(loc, cmd_): &Command) {
     use Command_ as C;
     match cmd_ {
-        C::Assign(ls, e) => {
+        C::Assign(ls, e, _) => {
             exp(context, e);
             lvalues(context, ls);
         }
